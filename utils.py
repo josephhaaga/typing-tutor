@@ -10,7 +10,7 @@ class KeyboardListener:
     running = True
 
     def on_press(self, key):
-        if key == Key.esc:
+        if key == Key.esc or key == Key.enter:
             self.running = False
 
     def on_release(self, key):
@@ -35,15 +35,13 @@ class KeyboardListener:
 
 ## Example Usage B
 class WPMListener(KeyboardListener):
-    # Does this really need to subclass KeyboardListener? Could it just be a base class that has its own KeyboardListener?
     chars_pressed_this_second = 0
     chars_per_second = []  # update this count every second
     _timestep = 0
 
     def on_press(self, key):
-        if key == Key.enter:
-            self.running = False
         self.chars_pressed_this_second += 1
+        super().on_press(key)
 
     def calculate_wpm(self, listener):
         # https://pypi.org/project/wpm/#calculating-wpm

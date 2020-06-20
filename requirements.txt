@@ -1,1 +1,9 @@
+numpy==1.19.0
+pandas==1.0.5
 pynput==1.6.8
+pyobjc-core==6.2.1
+pyobjc-framework-Cocoa==6.2.1
+pyobjc-framework-Quartz==6.2.1
+python-dateutil==2.8.1
+pytz==2020.1
+six==1.15.0

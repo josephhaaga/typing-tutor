@@ -1,21 +1,45 @@
+"""Print an adjacency matrix of response times for n-gram key strokes."""
 from utils import KeyboardListener
 from datetime import datetime
 
-class NGramCalculator(KeyboardListener):
+import pandas as pd
+
+# As N gets larger, @lru_cache might become useful for redundant calculations
+
+
+class NGramListener(KeyboardListener):
     events = []
 
+    def __init__(self, n=2):
+        self.N = n
+
     def on_press(self, key):
-        super().on_press()
-        event = {'key': key, 'time': datetime.now()}
+        event = {"key": key, "time": datetime.now()}
         self.events += [event]
+        super().on_press(key)
 
+    def calculate_ngram_adjacency_matrix(self, listener):
+        keystroke_df = pd.DataFrame(self.events)
+        keys = keystroke_df['key'].apply(str)
+        keystroke_df['key 1'] = keys.shift(1)
+        keystroke_df['key 2'] = keys
+        kt = pd.to_datetime(keystroke_df['time'])
+        keystroke_df['time'] = kt.diff().apply(lambda x: x.microseconds)
 
-    def calculate_ngrams(self):
-        pass
+        keystroke_df = keystroke_df[['key 1', 'key 2', 'time']][1:]
+        adjacency_matrix = keystroke_df.pivot_table(index='key 1', columns='key 2', aggfunc='mean')
+        print(adjacency_matrix)
+
 
     def run(self):
-        super().run()
-        self.
+        super().run(
+            after_running=self.calculate_ngram_adjacency_matrix  # should after_running() return output?
+        )
 
-# How can we make KeyboardListener easily extendable?
-# I'd like to declare a custom datastructure, and functions that update them within the KeyboardListener.run() loop
+
+def main():
+    runner = NGramListener()
+    runner.run()
+
+if __name__ == '__main__':
+    main()
