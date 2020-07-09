@@ -1,5 +1,6 @@
-import time
 from statistics import mean
+import time
+import sys
 
 from pynput.keyboard import Key, Listener
 
@@ -28,7 +29,8 @@ class KeyboardListener:
             before_running(self)  # This should allow us to initialize variables
         while self.running:
             if while_running:
-                while_running(self)
+                while_running(self) # this should swallow input https://github.com/moses-palmer/pynput/issues/47
+                sys.stdin.read()
             time.sleep(1)
         if after_running:
             after_running(self)

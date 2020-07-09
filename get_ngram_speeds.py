@@ -3,6 +3,8 @@ from utils import KeyboardListener
 from datetime import datetime
 
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # As N gets larger, @lru_cache might become useful for redundant calculations
 
@@ -28,12 +30,23 @@ class NGramListener(KeyboardListener):
 
         keystroke_df = keystroke_df[['key 1', 'key 2', 'time']][1:]
         adjacency_matrix = keystroke_df.pivot_table(index='key 1', columns='key 2', aggfunc='mean')
-        print(adjacency_matrix)
+        return adjacency_matrix
 
+    def show_heatmap(self, adjacency_matrix):
+        breakpoint()
+        sns.heatmap(adjacency_matrix)
+        plt.show()
+
+    def perform_postprocessing(self, listener):
+        adj_mat = self.calculate_ngram_adjacency_matrix(listener)
+        print(adj_mat)
+        breakpoint()
+        adj_mat.to_csv("./results.csv")
 
     def run(self):
         super().run(
-            after_running=self.calculate_ngram_adjacency_matrix  # should after_running() return output?
+            after_running=self.perform_postprocessing
+            # after_running=self.calculate_ngram_adjacency_matrix  # should after_running() return output?
         )
 
 
